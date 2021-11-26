@@ -1,43 +1,40 @@
-package com.example.calendardemoapp;
+package com.example.calendardemoapp
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.widget.AppCompatTextView
+import android.os.Bundle
+import android.view.View
+import com.example.calendardemoapp.R
+import com.example.calendardemoapp.Globals
+import com.example.calendardemoapp.MainActivity
+import com.example.calendardemoapp.CalendarAdapter
+import java.util.*
 
-import android.os.Bundle;
-import android.view.View;
+class MainActivity : AppCompatActivity() {
+    private var calendarRV: RecyclerView? = null
+    private var layoutManager: LinearLayoutManager? = null
+    private var selected_tv: AppCompatTextView? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        val c = Calendar.getInstance()
+        Globals.currentMonth = c[Calendar.MONTH] + 1
+        Globals.currentYear = c[Calendar.YEAR]
+        Globals.currentDate = c[Calendar.DATE]
+        calendarRV = findViewById(R.id.calendar_rv)
+        //selected_tv = findViewById(R.id.selected_tv)
+        selected_tv?.setVisibility(View.VISIBLE)
+        layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
+        calendarRV?.setHasFixedSize(true)
+        calendarRV?.setNestedScrollingEnabled(true)
+        calendarRV?.setLayoutManager(layoutManager)
+        calendarAdapter = CalendarAdapter(this, Globals.months, Globals.year)
+        calendarRV?.setAdapter(calendarAdapter)
+    }
 
-import java.util.Calendar;
-
-public class MainActivity extends AppCompatActivity {
-
-    private RecyclerView calendarRV;
-    private LinearLayoutManager layoutManager;
-    public static CalendarAdapter calendarAdapter;
-    private AppCompatTextView selected_tv;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-
-        Calendar c = Calendar.getInstance();
-        Globals.currentMonth = c.get(Calendar.MONTH)+1;
-        Globals.currentYear = c.get(Calendar.YEAR);
-        Globals.currentDate = c.get(Calendar.DATE);
-
-        calendarRV = findViewById(R.id.calendar_rv);
-        selected_tv = findViewById(R.id.selected_tv);
-        selected_tv.setVisibility(View.GONE);
-
-        layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
-        calendarRV.setHasFixedSize(true);
-        calendarRV.setNestedScrollingEnabled(true);
-        calendarRV.setLayoutManager(layoutManager);
-        calendarAdapter = new CalendarAdapter(this,Globals.months,Globals.year);
-        calendarRV.setAdapter(calendarAdapter);
-
-
+    companion object {
+        var calendarAdapter: CalendarAdapter? = null
     }
 }

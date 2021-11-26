@@ -1,109 +1,88 @@
-package com.example.calendardemoapp;
+package com.example.calendardemoapp
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
+import android.content.Context
+import androidx.recyclerview.widget.RecyclerView
+import com.example.calendardemoapp.DateAdapter
+import com.example.calendardemoapp.Globals
+import android.view.ViewGroup
+import android.view.LayoutInflater
+import android.view.View
+import com.example.calendardemoapp.R
+import android.widget.Toast
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.recyclerview.widget.GridLayoutManager
+import java.util.*
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import java.util.Calendar;
-import java.util.ConcurrentModificationException;
-
-public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
-
-    private Context context;
-    private String[] months;
-    private int year;
-    DateAdapter dateAdapter;
-
-    int days=0;
-    int spaces=0;
-    int Y = Globals.year;
-    int pos = 0;
-
-    public CalendarAdapter(Context context,String[] months,int year) {
-        this.context=context;
-        this.months=months;
-        this.year=year;
+class CalendarAdapter(
+    private val context: Context,
+    private val months: Array<String>,
+    private val year: Int
+) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
+    var dateAdapter: DateAdapter? = null
+    var days = 0
+    var spaces = 0
+    var Y = Globals.year
+    var pos = 0
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.calendar_item, parent, false)
+        return ViewHolder(v)
     }
 
-    @NonNull
-    @Override
-    public CalendarAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.calendar_item, parent, false);
-        return new CalendarAdapter.ViewHolder(v);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull CalendarAdapter.ViewHolder holder, int position) {
-        holder.monthTV.setText(Globals.months[position]+" - "+Globals.year);
-
-        pos = position+1;
-        if(position==1){
-            days=28;
-        }else if(position==0 || position==2 || position==4 || position==6 || position==7) {
-            days=31;
-        }else if(position==8){
-            days=30;
-        }else if(position==9 || position==11){
-            days=31;
-        }else{
-            days=30;
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.monthTV.text = Globals.months[position].toString() + " - " + Globals.year
+        pos = position + 1
+        days = if (position == 1) {
+            28
+        } else if (position == 0 || position == 2 || position == 4 || position == 6 || position == 7) {
+            31
+        } else if (position == 8) {
+            30
+        } else if (position == 9 || position == 11) {
+            31
+        } else {
+            30
         }
         // check for leap year
-        if  ((((Y % 4 == 0) && (Y % 100 != 0)) ||  (Y % 400 == 0)) && position == 1){
-            days = 29;
+        if ((Y % 4 == 0 && Y % 100 != 0 || Y % 400 == 0) && position == 1) {
+            days = 29
         }
         // spaces required
 //        Globals.startDayOfMonth = CalendarApplication.getInstance().getStartDay(pos,Y);
 
-       /* Snackbar.make(parentLayout, "This is main activity", Snackbar.LENGTH_LONG)
-                .show();*/
-
-        if(Globals.selected_date.size()>0){
-            String selected_date = Globals.selected_date.get(0).get("date")+"/"+
-                    Globals.selected_date.get(0).get("month")+"/"+
-                    Globals.selected_date.get(0).get("year");
-            Toast.makeText(context,"Selected Date="+selected_date,Toast.LENGTH_SHORT).show();
+        /* Snackbar.make(parentLayout, "This is main activity", Snackbar.LENGTH_LONG)
+                .show();*/if (Globals.selected_date.size > 0) {
+            val selected_date = Globals.selected_date[0]["date"].toString() + "/" +
+                    Globals.selected_date[0]["month"] + "/" +
+                    Globals.selected_date[0]["year"]
+            Toast.makeText(context, "Selected Date=$selected_date", Toast.LENGTH_SHORT).show()
         }
-        Calendar c = Calendar.getInstance();
-        c.set(Y, pos,1);
-        c.add(Calendar.MONTH, -1);
-        int day2 = c.get(Calendar.DAY_OF_WEEK);
-        spaces = (day2-1);
-        dateAdapter = new DateAdapter(context,days,pos,Y,spaces);
-        holder.dateRV.setAdapter(dateAdapter);
+        val c = Calendar.getInstance()
+        c[Y, pos] = 1
+        c.add(Calendar.MONTH, -1)
+        val day2 = c[Calendar.DAY_OF_WEEK]
+        spaces = day2 - 1
+        dateAdapter = DateAdapter(context, days, pos, Y, spaces)
+        holder.dateRV.adapter = dateAdapter
     }
 
-    @Override
-    public int getItemCount() {
-        return Globals.months.length;
+    override fun getItemCount(): Int {
+        return Globals.months.size
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        private RecyclerView dateRV;
-        private AppCompatTextView monthTV;
-        GridLayoutManager layoutManager;
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val dateRV: RecyclerView
+        val monthTV: AppCompatTextView
+        var layoutManager: GridLayoutManager
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            monthTV = itemView.findViewById(R.id.month_tv);
-            dateRV = itemView.findViewById(R.id.date_rv);
-            layoutManager = new GridLayoutManager(context,7,GridLayoutManager.VERTICAL,false);
-            dateRV.setHasFixedSize(true);
-            dateRV.setNestedScrollingEnabled(true);
-            dateRV.setLayoutManager(layoutManager);
-            dateAdapter = new DateAdapter(context,days,pos,Y,spaces);
-            dateRV.setAdapter(dateAdapter);
-
+        init {
+            monthTV = itemView.findViewById(R.id.month_tv)
+            dateRV = itemView.findViewById(R.id.date_rv)
+            layoutManager = GridLayoutManager(context, 7, GridLayoutManager.VERTICAL, false)
+            dateRV.setHasFixedSize(true)
+            dateRV.isNestedScrollingEnabled = true
+            dateRV.layoutManager = layoutManager
+            dateAdapter = DateAdapter(context, days, pos, Y, spaces)
+            dateRV.adapter = dateAdapter
         }
     }
 }

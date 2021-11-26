@@ -1,13 +1,2 @@
 com/example/calendardemoapp/BuildConfig.java
  com.example.calendardemoapp.BuildConfig
-com/example/calendardemoapp/CalendarAdapter.java
- com.example.calendardemoapp.CalendarAdapter
- com.example.calendardemoapp.CalendarAdapter$ViewHolder
-com/example/calendardemoapp/DateAdapter.java
- com.example.calendardemoapp.DateAdapter
- com.example.calendardemoapp.DateAdapter$1
- com.example.calendardemoapp.DateAdapter$ViewHolder
-com/example/calendardemoapp/MainActivity.java
- com.example.calendardemoapp.MainActivity
-com/example/calendardemoapp/Globals.java
- com.example.calendardemoapp.Globals
