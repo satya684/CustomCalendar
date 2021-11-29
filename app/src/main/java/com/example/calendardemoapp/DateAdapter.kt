@@ -39,6 +39,12 @@ class DateAdapter(
             holder.date_tv.text = date_value.toString()
         } else {
             holder.date_tv.text = ""
+            holder.date_tv.visibility = View.INVISIBLE
+            holder.firstdivider?.setVisibility(View.INVISIBLE)
+            holder.second?.setVisibility(View.INVISIBLE)
+            holder.thdivider?.setVisibility(View.INVISIBLE)
+            holder.firstdivider?.setVisibility(View.INVISIBLE)
+
         }
         val checkMap = HashMap<String, String>()
         checkMap["year"] = year.toString()
@@ -61,6 +67,7 @@ class DateAdapter(
             holder.date_tv.setBackgroundColor(context.resources.getColor(R.color.purple_500))
         } else {
             holder.date_tv.setBackgroundColor(context.resources.getColor(R.color.white))
+
         }
         val finalDate_value = date_value
         holder.date_tv.setOnClickListener {
@@ -113,9 +120,17 @@ class DateAdapter(
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var date_tv: AppCompatTextView
+        var firstdivider: View? = null
+        var second: View? = null
+        var thdivider: View? = null
+        var foudivider: View? = null
 
         init {
             date_tv = itemView.findViewById(R.id.date_tv)
+            firstdivider = itemView.findViewById(R.id.firstdivider)
+            second = itemView.findViewById(R.id.second)
+            thdivider = itemView.findViewById(R.id.thdivider)
+            foudivider = itemView.findViewById(R.id.foudivider)
         }
     }
 }
